@@ -1,0 +1,6 @@
+package by.mitsko.parse.bean;
+
+public enum TagName {
+	LIBRARY, BOOKS, NEWSPAPERS, MAGAZINES, BOOK, NEWSPAPER, MAGAZINE, TITLE, AVAILABILITY, AUTHOR, YEAR, DATE, DAY, VOLUME
+
+}

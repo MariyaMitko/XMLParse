@@ -1,0 +1,218 @@
+package by.mitsko.parse.logic;
+
+import java.util.ArrayList;
+import java.util.List;
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.DefaultHandler;
+import by.mitsko.parse.bean.Book;
+import by.mitsko.parse.bean.Magazine;
+import by.mitsko.parse.bean.Newspaper;
+import by.mitsko.parse.bean.TagName;
+import by.mitsko.parse.bean.MainTag;
+
+public class SaxHandler  extends DefaultHandler {
+	private List<Book> bookList = new ArrayList<Book>();
+	private Book book;
+	private List<Newspaper> newspaperList = new ArrayList<Newspaper>();
+	private Newspaper newspaper;
+	private List<Magazine> magazineList = new ArrayList<Magazine>();
+	private Magazine magazine;
+	private StringBuilder text;
+	
+	public List<Book> getBookList() {
+		return bookList;
+	}
+
+	public List<Newspaper> getNewspaperList() {
+		return newspaperList;
+	}
+
+	public List<Magazine> getMagazineList() {
+		return magazineList;
+	}
+
+	public void startDocument() throws SAXException {
+		System.out.println("Parsing started.");
+	}
+
+	public void endDocument() throws SAXException {
+		System.out.println("Parsing ended.");
+	}
+
+	public void startElement(String uri, String localName, String qName,
+			Attributes attributes) throws SAXException {
+		System.out.println("startElement -> " + "uri: " + uri + ", localName:" + " " + localName + ", qName: " + qName);
+		
+		text = new StringBuilder();
+		if (qName.equals("book")) {
+			book = new Book();
+			book.setId((attributes.getValue("id")));
+		}else if(qName.equals("newspaper")){
+			newspaper = new Newspaper();
+			newspaper.setId((attributes.getValue("id")));
+		}else if(qName.equals("magazine")){
+			magazine = new Magazine();
+			magazine.setId((attributes.getValue("id")));
+		}
+	}
+	public void characters(char[] buffer, int start, int length) {
+		text.append(buffer, start, length);
+	}
+	
+	public void endElement(String uri, String localName, String qName)
+			throws SAXException {
+		MainTag mainTag = MainTag.valueOf(qName.toUpperCase().replace("-", "_"));
+		switch (mainTag) {
+		case BOOK:
+			endBook(uri, localName, qName);
+			break;
+		case NEWSPAPER:
+			endBook(uri, localName, qName);
+			break;
+		case MAGAZINE:
+			endMagazine(uri, localName, qName);
+			break;
+			}
+		}
+	public void endBook(String uri, String localName, String qName)
+			throws SAXException {
+		TagName tag = TagName.valueOf(qName.toUpperCase().replace("-", "_"));
+		switch (tag) {
+		case TITLE:
+			book.setTitle(text.toString());
+			break;
+		case AVAILABILITY:
+			book.setAvailability(text.toString());
+			break;
+		case AUTHOR:
+			book.setAuthor(text.toString());
+			break;
+		case YEAR:
+			book.setYear(text.toString());
+			break;
+			
+	}
+	}
+	public void endNewspaper(String uri, String localName, String qName)
+			throws SAXException {
+		TagName tag = TagName.valueOf(qName.toUpperCase().replace("-", "_"));
+		switch (tag) {
+		case TITLE:
+			newspaper.setTitle(text.toString());
+			break;
+		case AVAILABILITY:
+			newspaper.setAvailability(text.toString());
+			break;
+		case DATE:
+			newspaper.setDate(text.toString());
+			break;
+		case DAY:
+			newspaper.setDay(text.toString());
+			break;
+}
+	}
+	public void endMagazine(String uri, String localName, String qName)
+			throws SAXException {
+		TagName tag = TagName.valueOf(qName.toUpperCase().replace("-", "_"));
+		switch (tag) {
+		case TITLE:
+			magazine.setTitle(text.toString());
+			break;
+		case AVAILABILITY:
+			magazine.setAvailability(text.toString());
+			break;
+		case DATE:
+			magazine.setDate(text.toString());
+			break;
+		case VOLUME:
+			magazine.setVolume(text.toString());
+			break;
+}
+	}
+	public void warning(SAXParseException exception) {
+		System.err.println("WARNING: line " + exception.getLineNumber() + ": " + exception.getMessage());
+	}
+
+	public void error(SAXParseException exception) {
+		System.err.println("ERROR: line " + exception.getLineNumber() + ": " + exception.getMessage());
+	}
+
+	public void fatalError(SAXParseException exception) throws SAXException {
+		System.err.println("FATAL: line " + exception.getLineNumber() + ": " + exception.getMessage());
+		throw (exception);
+	}
+}
+
+===================================================
+package by.mitsko.parse.runner;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+import by.mitsko.parse.bean.Book;
+
+public class mainDOM {
+
+	public static void main(String[] args) {
+		// создание DOM-анализатора (Xerces)
+
+		DocumentBuilder docBuilder = null;
+
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		try {
+			docBuilder = factory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			System.err.println("Ошибка конфигурации парсера: " + e);
+		}
+
+		Document document = null;
+
+		try {
+			document = docBuilder.parse("resources/library.xml");
+			} catch (SAXException e) {
+			System.err.println("Parsing failure: " + e);e.printStackTrace();
+		} catch (IOException e) {
+			System.err.println("File error or I/O error: " + e);e.printStackTrace();
+		}
+		Element root = document.getDocumentElement();
+		List<Book> catalog1 = new ArrayList<Book>();
+		NodeList bookNodes = root.getElementsByTagName("book");
+		Book book = null;
+		for (int i = 0; i < bookNodes.getLength(); i++) {
+			book = new Book();
+			Element bookElement = (Element) bookNodes.item(i);
+
+			book.setId((bookElement.getAttribute("id")));
+			book.setTitle(getSingleChild(bookElement, "title").getTextContent().trim());
+			book.setAvailability(getSingleChild(bookElement, "availability").getTextContent().trim());
+			book.setAuthor(getSingleChild(bookElement, "author").getTextContent().trim());
+			book.setYear(getSingleChild(bookElement, "year").getTextContent().trim());
+			catalog1.add(book);
+		}
+
+		for (Book b : catalog1) {
+			System.out.println(b.getTitle() + ", " +b.getAvailability()+ ", " + b.getAuthor()+ ", " + b.getYear());
+		}
+	}
+
+	private static Element getSingleChild(Element element, String childName) {
+		NodeList nlist = element.getElementsByTagName(childName);
+		Element child = (Element) nlist.item(0);
+		return child;
+	}
+
+
+}
+
+

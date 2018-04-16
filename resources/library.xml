@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE xml>
+
+
+<library xmlns="http://www.it-academy.by/Library-Schema"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.it-academy.by/Library-Schema Library-Schema.xsd">
+		<books>
+			<book id="b-001">
+				<title>Harry Potter and the Philosopher's stone</title>
+				<availability>get in hand, 20 days</availability>
+				<author>J. K. Rowling</author>
+				<year>1998</year>
+			</book>
+			<book id="b-002">
+				<title>Do No Harm: Stories of Life, Death and Brain Surgery</title>
+				<availability>reading room</availability>
+				<author>H. Marsh</author>
+				<year> 2014</year>
+			</book>
+		</books>
+		<newspapers>
+			<newspaper id="n-001">
+				<title>International New York Times</title>
+				<availability>get in hand, 5 days</availability>
+				<date>october, 26, 2015</date>
+				<day>monday</day>
+     		</newspaper>
+		</newspapers>
+		<magazines>
+			<magazine id="m-001">
+				<title>Nature</title>
+				<availability>reading room</availability>
+				<date>august, 25, 2016</date>
+				<volume>536</volume>
+        	</magazine>
+		</magazines>
+</library>
