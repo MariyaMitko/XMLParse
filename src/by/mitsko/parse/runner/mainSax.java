@@ -36,7 +36,7 @@ public class mainSax {
 		
 		for (Book b : catalog1) {
 		System.out.println(b.getId()+ ", " + b.getTitle() + ", " +b.getAvailability()+ ", " + b.getAuthor()+ ", " + b.getYear());
-		}
+		        }
 		
 		for (Newspaper n : catalog2) {
 			System.out.println(n.getId()+ ", " +n.getTitle() + ", " +n.getAvailability()+ ", " + n.getDate()+ ", " + n.getDay());
@@ -44,7 +44,7 @@ public class mainSax {
 		
 		for (Magazine m : catalog3) {
 			System.out.println(m.getId()+ ", " +m.getTitle() + ", " + m.getAvailability()+ ", " + m.getDate()+ ", " + m.getVolume());
-			}
+		        }
 		
 		
 		}
